@@ -238,7 +238,10 @@ class OpenIDBackend:
 
         username = self._get_available_username(details['nickname'], openid_response.identity_url)
 
-        user = User.objects.create_user(username, email, password=None)
+        try:
+            user = User.objects.get(username=username, email=email)
+        except User.DoesNotExist:
+            user = User.objects.create_user(username, email, password=None)
         self.associate_openid(user, openid_response)
         self.update_user_details(user, details, openid_response)
 
